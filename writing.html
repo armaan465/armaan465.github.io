@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Writing — Armaan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --white: #111008; --off: #1e1a10; --ink: #eee8e0;
+      --mid: #908070; --light: #302818; --accent: #b85030; --accent-light: #281408;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--white); color: var(--ink); font-family: 'Josefin Sans', sans-serif; font-weight: 400; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: flex-end; align-items: center;
+      padding: 2.5rem 4rem; transition: background 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(17,16,8,0.96); backdrop-filter: blur(14px);
+      padding: 1.5rem 4rem; border-bottom: 1px solid var(--light);
+    }
+    .nav-links { display: flex; gap: 3rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.68rem; font-weight: 400; letter-spacing: 0.18em;
+      text-transform: uppercase; text-decoration: none; color: var(--mid); transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 12rem 4rem 5rem; border-bottom: 1px solid var(--light);
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif; font-weight: 400;
+      font-size: clamp(3.5rem, 7vw, 7rem); line-height: 1; letter-spacing: 0.04em;
+      opacity: 0; animation: fadeUp 1s ease 0.3s forwards;
+    }
+    .page-header h1 em { font-style: italic; color: var(--accent); }
+    .page-header-sub {
+      font-size: 0.8rem; color: var(--mid); line-height: 1.7; max-width: 260px; text-align: right;
+      opacity: 0; animation: fadeUp 1s ease 0.5s forwards;
+    }
+
+    /* SUBSTACK BANNER */
+    .substack-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2.2rem 4rem; background: #090806; gap: 2rem;
+    }
+    .substack-left { display: flex; align-items: center; gap: 1.5rem; }
+    .substack-logo {
+      width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      background: var(--accent);
+    }
+    .substack-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .substack-name {
+      font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.2rem;
+      color: var(--white); letter-spacing: 0.05em;
+    }
+    .substack-desc { font-size: 0.75rem; color: rgba(238,232,224,0.35); margin-top: 0.2rem; }
+    .substack-btn {
+      font-size: 0.62rem; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; color: var(--ink); background: var(--accent);
+      padding: 0.85rem 2rem; white-space: nowrap; transition: background 0.3s; flex-shrink: 0;
+    }
+    .substack-btn:hover { background: var(--accent-light); }
+
+    /* SECTION HEADER */
+    .section-header { padding: 5rem 4rem 0; }
+    .section-label {
+      font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--light); }
+
+    /* RECENTLY PUBLISHED — swipeable carousel */
+    .recent-carousel-wrap {
+      padding: 0 4rem;
+      position: relative;
+    }
+    .recent-carousel {
+      display: flex;
+      gap: 1px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      cursor: grab;
+    }
+    .recent-carousel:active { cursor: grabbing; }
+    .recent-carousel::-webkit-scrollbar { display: none; }
+    .recent-card {
+      flex: 0 0 calc(33.333% - 1px);
+      min-width: 280px;
+      scroll-snap-align: start;
+      background: var(--off); text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; transition: background 0.3s; overflow: hidden;
+    }
+    .recent-card:hover { background: var(--accent-light); }
+
+    /* Carousel nav dots — removed */
+    .rc-img {
+      width: 100%; height: 180px; object-fit: cover; display: block;
+      background: var(--light);
+    }
+    .rc-img-placeholder {
+      width: 100%; height: 180px; background: linear-gradient(155deg, #d6c9b4, #a89272);
+    }
+    .rc-body { padding: 2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; }
+    .rc-cat {
+      font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.4rem;
+    }
+    .rc-title {
+      font-family: 'Playfair Display', serif; font-weight: 400;
+      font-size: 1.2rem; line-height: 1.3; margin-bottom: 0.6rem;
+    }
+    .rc-preview {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 0.88rem; color: var(--mid); line-height: 1.65; flex: 1;
+    }
+    .rc-bottom { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .rc-meta { display: flex; flex-direction: column; gap: 0.2rem; }
+    .rc-pub { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 400; }
+    .rc-date { font-size: 0.6rem; color: var(--light); }
+    .rc-award {
+      font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--white); background: var(--accent); padding: 0.25rem 0.7rem;
+    }
+
+    /* TWO COLUMN LAYOUT */
+    .writing-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--light);
+    }
+    .writing-col { padding: 4rem 0; }
+    .writing-col .section-header { padding: 0 4rem 0; }
+    .writing-col .pieces-list { padding: 0 4rem; }
+    .writing-col .piece {
+      grid-template-columns: 120px 1fr;
+    }
+    .writing-col .piece-tags { display: none; }
+    .writing-col .piece-thumb { width: 120px; height: 120px; }
+    .writing-col .piece-thumb-placeholder { width: 120px; height: 120px; }
+
+    @media (max-width: 900px) {
+      .writing-columns { grid-template-columns: 1fr; }
+      .writing-col { border-right: none; border-bottom: 1px solid var(--light); }
+      .writing-col .piece { grid-template-columns: 100px 1fr; }
+    }
+    .pieces-list { display: flex; flex-direction: column; padding: 0 4rem; }
+    .piece {
+      display: grid; grid-template-columns: 120px 1fr;
+      align-items: start; gap: 2rem;
+      padding: 2rem 0; border-top: 1px solid var(--light);
+      text-decoration: none; color: inherit; transition: padding-left 0.35s;
+    }
+    .piece:last-child { border-bottom: 1px solid var(--light); }
+    .piece:hover { padding-left: 0.6rem; }
+
+    .piece-img-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+
+    .piece-date {
+      font-size: 0.56rem; letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--mid); line-height: 1.6; text-align: center;
+    }
+
+    /* Article thumbnail */
+    .piece-thumb {
+      width: 120px; height: 120px; object-fit: cover; flex-shrink: 0;
+      background: var(--off); display: block;
+    }
+    .piece-thumb-placeholder {
+      width: 120px; height: 120px; flex-shrink: 0;
+      background: linear-gradient(155deg, #d6c9b4, #a89272);
+    }
+
+    .piece-body h2 {
+      font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.35rem;
+      margin-bottom: 0.2rem; line-height: 1.25; transition: color 0.3s;
+    }
+    .piece:hover .piece-body h2 { color: var(--accent); }
+    .piece-pub {
+      font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem; margin-top: 0.35rem; font-weight: 400;
+    }
+    .piece-preview {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 0.93rem; color: var(--mid); line-height: 1.65; max-width: 520px;
+    }
+    .piece-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; padding-top: 0.3rem; }
+    .tag-pub {
+      font-size: 0.56rem; letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--accent-light); padding: 0.28rem 0.75rem; white-space: nowrap;
+    }
+    .tag-award {
+      font-size: 0.54rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--white); background: var(--accent); padding: 0.28rem 0.75rem; white-space: nowrap;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #090806; padding: 2.8rem 4rem; margin-top: 5rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 0.6rem; letter-spacing: 0.1em; color: rgba(238,232,224,0.2); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(238,232,224,0.3); text-decoration: none; transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      nav { padding: 1.5rem 2rem; } nav.scrolled { padding: 1.2rem 2rem; }
+      .page-header { padding: 9rem 2rem 3rem; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .page-header-sub { text-align: left; }
+      .substack-banner { padding: 2rem; flex-direction: column; align-items: flex-start; }
+      .recent-carousel-wrap { padding: 0 2rem; }
+      .recent-card { flex: 0 0 85%; }
+      .section-header { padding: 3rem 2rem 0; }
+      .pieces-list { padding: 0 2rem; }
+      .piece { grid-template-columns: 70px 1fr; gap: 1rem; }
+      .piece-date { display: none; }
+      .piece-tags { flex-direction: row; align-items: flex-start; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .nav-links { gap: 1.5rem; }
+      .piece { grid-template-columns: 1fr; }
+      .piece-thumb, .piece-thumb-placeholder { width: 100%; height: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <ul class="nav-links">
+      <li><a href="index.html">About</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="photography.html">Photography</a></li>
+      <li><a href="filmmaking.html">Filmmaking</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <h1>Writ<em>ing</em></h1>
+    <p class="page-header-sub">Fiction, non-fiction, and everything in between — published across print and digital.</p>
+  </div>
+
+  <!-- SUBSTACK -->
+  <div class="substack-banner reveal">
+    <div class="substack-left">
+      <div class="substack-logo">
+        <img src="images/substack-logo.png" alt="Scrambled logo"/>
+      </div>
+      <div>
+        <p class="substack-name">Scrambled</p>
+        <p class="substack-desc">My Substack, where I dump my leftover thoughts and words</p>
+      </div>
+    </div>
+    <a href="https://scrambledbyarmaan.substack.com/" target="_blank" class="substack-btn">Read on Substack →</a>
+  </div>
+
+  <!-- RECENTLY PUBLISHED -->
+  <div class="section-header reveal">
+    <p class="section-label">Recently Published</p>
+  </div>
+  <div class="recent-carousel-wrap reveal">
+    <div class="recent-carousel" id="recentCarousel">
+
+    <a href="https://www.thechakkar.com/home/withoutflight" target="_blank" class="recent-card">
+      <img class="rc-img" src="images/without-flight.png" alt="Without Flight" loading="lazy"/>
+      <div class="rc-body">
+        <div>
+          <p class="rc-cat">Fiction</p>
+          <h3 class="rc-title">Without Flight</h3>
+          <p class="rc-preview">"The watchman pulled down hard on the rope, the breakfast bell rang, and the earth shook beneath them."</p>
+        </div>
+        <div class="rc-bottom">
+          <div class="rc-meta">
+            <span class="rc-pub">The Chakkar</span>
+            <span class="rc-date">February 2026</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://parchamonline.in/2025/12/26/december-2025-fiction/2/#the-apotheosis-of-himmat-dewan-by-armaan" target="_blank" class="recent-card">
+      <img class="rc-img" src="images/apotheosis.png" alt="The Apotheosis of Himmat Dewan" loading="lazy"/>
+      <div class="rc-body">
+        <div>
+          <p class="rc-cat">Fiction</p>
+          <h3 class="rc-title">The Apotheosis of Himmat Dewan</h3>
+          <p class="rc-preview">"The laughter ceased, the boys stiffened, and the chalk hit Himmat square between the eyes."</p>
+        </div>
+        <div class="rc-bottom">
+          <div class="rc-meta">
+            <span class="rc-pub">Parcham</span>
+            <span class="rc-date">December 2025</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://whiskeytit.com/article/the-elizabeth-line/" target="_blank" class="recent-card">
+      <img class="rc-img" src="images/elizabeth-line.jpeg" alt="The Elizabeth Line" loading="lazy"/>
+      <div class="rc-body">
+        <div>
+          <p class="rc-cat">Fiction</p>
+          <h3 class="rc-title">The Elizabeth Line</h3>
+          <p class="rc-preview">"The tube was always lonely. But not as lonely as that Monday, when Tymour drifted onto it."</p>
+        </div>
+        <div class="rc-bottom">
+          <div class="rc-meta">
+            <span class="rc-pub">Whiskey Tit</span>
+            <span class="rc-date">June 2023</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+  </div><!-- end carousel -->
+  </div><!-- end carousel-wrap -->
+  <div class="writing-columns">
+    <div class="writing-col">
+      <div class="section-header reveal">
+        <p class="section-label">Fiction</p>
+      </div>
+      <div class="pieces-list">
+
+        <a href="https://www.thechakkar.com/home/withoutflight" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/without-flight.png" alt="Without Flight" loading="lazy"/>
+          <span class="piece-date">Feb 2026</span></div>
+          <div class="piece-body">
+            <h2>Without Flight</h2>
+            <p class="piece-pub">The Chakkar</p>
+            <p class="piece-preview">"The watchman pulled down hard on the rope, the breakfast bell rang, and the earth shook beneath them."</p>
+          </div>
+        </a>
+
+        <a href="https://parchamonline.in/2025/12/26/december-2025-fiction/2/#the-apotheosis-of-himmat-dewan-by-armaan" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/apotheosis.png" alt="The Apotheosis of Himmat Dewan" loading="lazy"/>
+          <span class="piece-date">Dec 2025</span></div>
+          <div class="piece-body">
+            <h2>The Apotheosis of Himmat Dewan</h2>
+            <p class="piece-pub">Parcham</p>
+            <p class="piece-preview">"The laughter ceased, the boys stiffened, and the chalk hit Himmat square between the eyes."</p>
+          </div>
+        </a>
+
+        <a href="https://whiskeytit.com/article/the-elizabeth-line/" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/elizabeth-line.jpeg" alt="The Elizabeth Line" loading="lazy"/>
+          <span class="piece-date">Jun 2023</span></div>
+          <div class="piece-body">
+            <h2>The Elizabeth Line</h2>
+            <p class="piece-pub">Whiskey Tit</p>
+            <p class="piece-preview">"The tube was always lonely. But not as lonely as that Monday, when Tymour drifted onto it."</p>
+          </div>
+        </a>
+
+        <a href="https://blogs.ed.ac.uk/writing/armaan-verma-hills-of-basalt/" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/hills-of-basalt.png" alt="Hills of Basalt" loading="lazy"/>
+          <span class="piece-date">Apr 2023</span></div>
+          <div class="piece-body">
+            <h2>Hills of Basalt</h2>
+            <p class="piece-pub">University of Edinburgh Blog</p>
+            <p class="piece-preview">"And the thing was small. Made soft by the water, and its arms and legs wrought like the manyhanded idol of a god."</p>
+          </div>
+        </a>
+
+        <a href="https://blogs.ed.ac.uk/writing/armaan-in-the-clouds/" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/in-the-clouds.png" alt="In the Clouds" loading="lazy"/>
+          <span class="piece-date">Feb 2022</span></div>
+          <div class="piece-body">
+            <h2>In the Clouds</h2>
+            <p class="piece-pub">University of Edinburgh Blog</p>
+            <p class="piece-preview">"Face-to-face. With the prime minister, as oil began to pour through the windows like waterfalls. The prime minister!"</p>
+          </div>
+        </a>
+
+        <a href="https://theselkie.co.uk/armaan/" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/propositions.png" alt="Propositions for the Living" loading="lazy"/>
+          <span class="piece-date">Jun 2021</span></div>
+          <div class="piece-body">
+            <h2>Propositions for the Living</h2>
+            <p class="piece-pub">The Selkie</p>
+            <p class="piece-preview">"Much to his numbed astonishment, Natwar Rai awoke in his neatly made, perfumed bed after having overdosed on sleeping pills the night before."</p>
+          </div>
+        </a>
+
+        <a href="https://www.himalmag.com/culture/the-lalbujh-affair-short-story-2020" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/lalbujh.png" alt="The Lalbujh Affair" loading="lazy"/>
+          <span class="piece-date">Aug 2020</span></div>
+          <div class="piece-body">
+            <h2>The Lalbujh Affair</h2>
+            <p class="piece-pub">HIMAL Southasian</p>
+            <p class="piece-preview">"Ravi Singh's father was a proud schoolmaster, often referred to as the most knowledgeable man in all of Aulapur."</p>
+          </div>
+        </a>
+
+        <a href="https://www.thebookreviewindia.org/39932-2/" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/not-a-day.png" alt="Not a Day for Outings" loading="lazy"/>
+          <span class="piece-date">Jul 2020</span></div>
+          <div class="piece-body">
+            <h2>Not a Day for Outings</h2>
+            <p class="piece-pub">The Book Review India</p>
+            <p class="piece-preview">"Through the thick haze, Sayma did not see the airborne projectile that smacked her square between the eyes."</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="writing-col">
+      <div class="section-header reveal">
+        <p class="section-label">Non-Fiction</p>
+      </div>
+      <div class="pieces-list">
+
+        <a href="https://www.cntraveller.com/article/journey-through-alamut-valley" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/fortresses.jpeg" alt="Fortresses of Solitude" loading="lazy"/>
+          <span class="piece-date">Jun 2023</span></div>
+          <div class="piece-body">
+            <h2>Fortresses of Solitude: A Journey Through Northern Iran's Alamut Valley</h2>
+            <p class="piece-pub">Condé Nast Traveller</p>
+            <p class="piece-preview">"I had just bitten into a sugar cube when we almost set the mountain on fire."</p>
+          </div>
+        </a>
+
+        <a href="https://www.thequint.com/opinion/indias-dharam-sansads-was-genocide-normalised-in-ancient-texts" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/dharam-sansads.webp" alt="India's Dharam Sansads" loading="lazy"/>
+          <span class="piece-date">Jan 2022</span></div>
+          <div class="piece-body">
+            <h2>India's Dharam Sansads: Was Genocide Normalised in Ancient Texts?</h2>
+            <p class="piece-pub">The Quint</p>
+            <p class="piece-preview">"In Sanskrit literature, history is often verified myth, and myth a metaphor for history."</p>
+          </div>
+        </a>
+
+        <a href="https://www.theskinny.co.uk/intersections/features/history-of-the-paisley-pattern" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/paisley.jpg" alt="Persian Pickles, Welsh Pears" loading="lazy"/>
+          <span class="piece-date">Jul 2021</span></div>
+          <div class="piece-body">
+            <h2>Persian Pickles, Welsh Pears: A History of the Paisley Pattern</h2>
+            <p class="piece-pub">The Skinny</p>
+            <p class="piece-preview">"On Cotton Street, Paisley, stands a sign that reads 'Renfrewshire House', the headquarters of the Renfrewshire Council."</p>
+          </div>
+        </a>
+
+        <a href="https://www.theskinny.co.uk/music/interviews/fiddlers-on-the-high-seas-the-history-of-scottish-fiddle-music" target="_blank" class="piece reveal">
+          <div class="piece-img-wrap"><img class="piece-thumb" src="images/fiddlers.jpg" alt="Fiddlers on the High Seas" loading="lazy"/>
+          <span class="piece-date">Apr 2021</span></div>
+          <div class="piece-body">
+            <h2>Fiddlers on the High Seas: The History of Scottish Fiddle Music</h2>
+            <p class="piece-pub">The Skinny</p>
+            <p class="piece-preview">"An old woman was once walking along the coast of Unst, the northernmost of the Shetland Islands, when she spotted the figure of a man lying on the beach."</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 5rem;"></div>
+
+  <footer>
+    <span class="footer-copy">© 2026 Armaan. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="#">Instagram</a>
+      <a href="#">Twitter</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+
+    // Scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Carousel — drag to scroll
+    const carousel = document.getElementById('recentCarousel');
+    const cards = carousel.querySelectorAll('.recent-card');
+
+    // Mouse drag to scroll
+    let isDragging = false, startX, scrollLeft;
+    carousel.addEventListener('mousedown', e => {
+      isDragging = true; startX = e.pageX - carousel.offsetLeft;
+      scrollLeft = carousel.scrollLeft; carousel.style.cursor = 'grabbing';
+    });
+    carousel.addEventListener('mouseleave', () => { isDragging = false; carousel.style.cursor = 'grab'; });
+    carousel.addEventListener('mouseup', () => { isDragging = false; carousel.style.cursor = 'grab'; });
+    carousel.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      e.preventDefault();
+      carousel.scrollLeft = scrollLeft - (e.pageX - carousel.offsetLeft - startX) * 1.5;
+    });
+  </script>
+</body>
+</html>
