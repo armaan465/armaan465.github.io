@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photography — Armaan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: #e0dcd4; font-family: 'DM Mono', monospace; font-weight: 300; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: baseline; padding: 3rem 4rem 0; }
+    .nav-name { font-family: 'DM Mono', monospace; font-weight: 300; font-size: 0.7rem; letter-spacing: 0.1em; color: #e0dcd4; text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: 'DM Mono', monospace; font-weight: 300; font-size: 0.65rem; letter-spacing: 0.12em; text-decoration: none; color: #5a5650; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e0dcd4; }
+
+    main { padding: 7rem 4rem 6rem; }
+    h1 { font-family: 'Special Elite', monospace; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1; margin-bottom: 1rem; letter-spacing: 0.01em; }
+    .intro { font-size: 0.78rem; color: #5a5650; line-height: 2; margin-bottom: 4rem; max-width: 480px; }
+
+    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .photo-card { position: relative; overflow: hidden; aspect-ratio: 1/1; background: #141414; cursor: pointer; }
+    .photo-card:nth-child(4) { aspect-ratio: 2/1; grid-column: span 2; }
+    .photo-card:nth-child(6) { aspect-ratio: 1/2; grid-row: span 2; }
+    .card-inner { position: absolute; inset: 0; background: #141414; transition: transform 0.6s ease; }
+    .photo-card:hover .card-inner { transform: scale(1.03); }
+    .card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.2rem; opacity: 0; transition: opacity 0.3s; }
+    .photo-card:hover .card-info { opacity: 1; }
+    .card-title { font-family: 'Special Elite', monospace; font-size: 0.85rem; color: #e0dcd4; }
+    .card-cat { font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; color: #5a5650; margin-bottom: 0.2rem; }
+    .placeholder-note { padding: 3rem 0; font-size: 0.7rem; color: #2e2e2e; font-style: italic; }
+
+    footer { padding: 3rem 4rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1a1a1a; margin-top: 4rem; }
+    .footer-copy { font-size: 0.55rem; letter-spacing: 0.08em; color: #2e2e2e; }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a { font-size: 0.55rem; letter-spacing: 0.1em; color: #2e2e2e; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: #e0dcd4; }
+
+    @media (max-width: 700px) {
+      nav { padding: 2rem 2rem 0; flex-direction: column; gap: 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      main { padding: 5rem 2rem 4rem; }
+      .photo-grid { grid-template-columns: 1fr 1fr; }
+      .photo-card:nth-child(4) { grid-column: span 1; aspect-ratio: 1/1; }
+      .photo-card:nth-child(6) { grid-row: span 1; aspect-ratio: 1/1; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-name">Armaan</a>
+    <ul class="nav-links">
+      <li><a href="/">About</a></li>
+      <li><a href="/writing">Writing</a></li>
+      <li><a href="/photography" class="active">Photography</a></li>
+      <li><a href="/filmmaking">Filmmaking</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>Photography</h1>
+    <p class="intro">Portraits, documentary, street — every shot tells a story.</p>
+    <div class="photo-grid">
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Street</p><p class="card-title">Faces of the City</p></div></div>
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Portrait</p><p class="card-title">Light Study I</p></div></div>
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Documentary</p><p class="card-title">The Long Road</p></div></div>
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Street</p><p class="card-title">Golden Hour</p></div></div>
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Portrait</p><p class="card-title">Light Study II</p></div></div>
+      <div class="photo-card"><div class="card-inner"></div><div class="card-info"><p class="card-cat">Documentary</p><p class="card-title">Shadow & Form</p></div></div>
+    </div>
+    <p class="placeholder-note">Photos coming soon.</p>
+  </main>
+
+  <footer>
+    <span class="footer-copy">© 2026 Armaan</span>
+    <div class="footer-links"><a href="#">Instagram</a><a href="#">Twitter</a><a href="#">LinkedIn</a></div>
+  </footer>
+</body>
+</html>
